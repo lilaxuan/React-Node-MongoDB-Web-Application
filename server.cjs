@@ -21,8 +21,8 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/api/pokemon', pokemon);
-app.use('/api/users', users);
+app.use('/api/pokemon', pokemon); // defined the base root url for the API
+app.use('/api/users', users); // defined the base root url for the API
 
 app.get('/', function (req, res) {
     res.send("This is the FIRST GET request")
