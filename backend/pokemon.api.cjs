@@ -19,7 +19,7 @@ router.post('/', async function(req, res) {
     const newPokemon = {
         name: requestBody.name,
         color: requestBody.color,
-        owner: "hunter",
+        owner: "jiaxuan",
     }
 
     // console.log(newPokemon);
