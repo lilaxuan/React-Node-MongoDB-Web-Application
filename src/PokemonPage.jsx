@@ -5,6 +5,10 @@ function PokemonPage() {
   const [pokemonListState, setPokemonListState] = useState([]);
   const [pokemonNameState, setPokemonNameState] = useState('');
   const [pokemonColorState, setPokemonColorState] = useState('');
+  const [editingState, setEditingState] = useState({
+    isEditing: false,
+    editingPokemonId: '',
+  });
   const [errorMsgState, setErrorMsgState] = useState('');
 
   async function getAllPokemon() {
@@ -12,23 +16,36 @@ function PokemonPage() {
     setPokemonListState(response.data);
   }
 
-  async function deletePokemon(pokemonName) {
-    await axios.delete('/api/pokemon/' + pokemonName);
+  async function deletePokemon(pokemonId) {
+    await axios.delete('/api/pokemon/' + pokemonId);
     await getAllPokemon();
   }
 
-  async function insertPokemon() {
+  async function onSubmit() {
     setErrorMsgState('')
     try {
-        await axios.post('/api/pokemon', {
+        if(editingState.isEditing) {
+          await axios.put('/api/pokemon/' + editingState.editingPokemonId, {
             name: pokemonNameState,
             color: pokemonColorState,
-        })
+          });
+
+        } else {
+          await axios.post('/api/pokemon', {
+            name: pokemonNameState,
+            color: pokemonColorState,
+          });
+        }
+
         setPokemonColorState('');
         setPokemonNameState('');
+        setEditingState({
+          isEditing: false, 
+          editingPokemonId: '',
+        });
         await getAllPokemon();    
     } catch (error) {
-        setErrorMsgState(error.response.data)
+        setErrorMsgState(error.response.data);
     }
   }
 
@@ -40,19 +57,41 @@ function PokemonPage() {
     setPokemonNameState(event.target.value);
   }
 
-  useEffect(function() {
+  function setEditingPokemon(pokemonName, pokemonColor, pokemonId) {
+    setPokemonColorState(pokemonColor);
+    setPokemonNameState(pokemonName);
+    setEditingState({
+      isEditing: true, 
+      editingPokemonId: pokemonId
+  });
+  }
+
+  function onStart() {
     getAllPokemon();
-  }, [])
+  }
+
+  function onCancel() {
+    setPokemonColorState('');
+    setPokemonNameState('');
+    setEditingState({
+      isEditing: false, 
+      editingPokemonId: '',
+  });
+  }
+
+  useEffect(onStart, []);
 
   const pokemonListElement = [];
   for(let i = 0; i < pokemonListState.length; i++) {
+    
     pokemonListElement.push(<li>Name: {pokemonListState[i].name} 
         - Color: {pokemonListState[i].color} 
-        - <button onClick={() => deletePokemon(pokemonListState[i].name)}>Delete</button>
+        - <button onClick={() => deletePokemon(pokemonListState[i]._id)}>Delete</button>
+        - <button onClick={() => setEditingPokemon(pokemonListState[i].name, pokemonListState[i].color, pokemonListState[i]._id)}>Edit</button>
     </li>)
   }
 
-
+  const inputFieldTitleText = editingState.isEditing ? "Edit Pokemon" : "Add new pokemon";
 
   return (
     <div>
@@ -64,7 +103,7 @@ function PokemonPage() {
             {pokemonListElement}
         </ul>
 
-        <div>Add new pokemon</div>
+        <div>{inputFieldTitleText}</div>
         <div>
             <div>
                 <label>Name:</label> <input value={pokemonNameState} onInput={(event) => updatePokemonName(event)}/>
@@ -73,7 +112,8 @@ function PokemonPage() {
                 <label>Color:</label> <input value={pokemonColorState} onInput={(event) => updatePokemonColor(event)}/>
             </div>
             <div>
-                <button onClick={() => insertPokemon()}>Submit</button>
+                <button onClick={() => onSubmit()}>Submit</button>
+                <button onClick={() => onCancel()}>Cancel</button>
             </div>
         </div>
     </div>
