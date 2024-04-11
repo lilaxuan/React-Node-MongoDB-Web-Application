@@ -13,6 +13,7 @@ function PokemonPage() {
 
   async function getAllPokemon() {
     const response = await axios.get('/api/pokemon');
+    console.log('hihi-getAllPokemon: ', response);
     setPokemonListState(response.data);
   }
 
@@ -24,28 +25,28 @@ function PokemonPage() {
   async function onSubmit() {
     setErrorMsgState('')
     try {
-        if(editingState.isEditing) {
-          await axios.put('/api/pokemon/' + editingState.editingPokemonId, {
-            name: pokemonNameState,
-            color: pokemonColorState,
-          });
-
-        } else {
-          await axios.post('/api/pokemon', {
-            name: pokemonNameState,
-            color: pokemonColorState,
-          });
-        }
-
-        setPokemonColorState('');
-        setPokemonNameState('');
-        setEditingState({
-          isEditing: false, 
-          editingPokemonId: '',
+      if (editingState.isEditing) {
+        await axios.put('/api/pokemon/' + editingState.editingPokemonId, {
+          name: pokemonNameState,
+          color: pokemonColorState,
         });
-        await getAllPokemon();    
+
+      } else {
+        await axios.post('/api/pokemon', {
+          name: pokemonNameState,
+          color: pokemonColorState,
+        });
+      }
+
+      setPokemonColorState('');
+      setPokemonNameState('');
+      setEditingState({
+        isEditing: false,
+        editingPokemonId: '',
+      });
+      await getAllPokemon();
     } catch (error) {
-        setErrorMsgState(error.response.data);
+      setErrorMsgState(error.response.data);
     }
   }
 
@@ -61,9 +62,9 @@ function PokemonPage() {
     setPokemonColorState(pokemonColor);
     setPokemonNameState(pokemonName);
     setEditingState({
-      isEditing: true, 
+      isEditing: true,
       editingPokemonId: pokemonId
-  });
+    });
   }
 
   function onStart() {
@@ -74,20 +75,20 @@ function PokemonPage() {
     setPokemonColorState('');
     setPokemonNameState('');
     setEditingState({
-      isEditing: false, 
+      isEditing: false,
       editingPokemonId: '',
-  });
+    });
   }
 
   useEffect(onStart, []);
 
   const pokemonListElement = [];
-  for(let i = 0; i < pokemonListState.length; i++) {
-    
-    pokemonListElement.push(<li>Name: {pokemonListState[i].name} 
-        - Color: {pokemonListState[i].color} 
-        - <button onClick={() => deletePokemon(pokemonListState[i]._id)}>Delete</button>
-        - <button onClick={() => setEditingPokemon(pokemonListState[i].name, pokemonListState[i].color, pokemonListState[i]._id)}>Edit</button>
+  for (let i = 0; i < pokemonListState.length; i++) {
+
+    pokemonListElement.push(<li>Name: {pokemonListState[i].name}
+      - Color: {pokemonListState[i].color}
+      - <button onClick={() => deletePokemon(pokemonListState[i]._id)}>Delete</button>
+      - <button onClick={() => setEditingPokemon(pokemonListState[i].name, pokemonListState[i].color, pokemonListState[i]._id)}>Edit</button>
     </li>)
   }
 
@@ -95,27 +96,27 @@ function PokemonPage() {
 
   return (
     <div>
-        {errorMsgState && <h1>
-            {errorMsgState}
-        </h1>}
-        Here are all your pokemon!!
-        <ul>
-            {pokemonListElement}
-        </ul>
+      {errorMsgState && <h1>
+        {errorMsgState}
+      </h1>}
+      Here are all your pokemon!!
+      <ul>
+        {pokemonListElement}
+      </ul>
 
-        <div>{inputFieldTitleText}</div>
+      <div>{inputFieldTitleText}</div>
+      <div>
         <div>
-            <div>
-                <label>Name:</label> <input value={pokemonNameState} onInput={(event) => updatePokemonName(event)}/>
-            </div>
-            <div>
-                <label>Color:</label> <input value={pokemonColorState} onInput={(event) => updatePokemonColor(event)}/>
-            </div>
-            <div>
-                <button onClick={() => onSubmit()}>Submit</button>
-                <button onClick={() => onCancel()}>Cancel</button>
-            </div>
+          <label>Name:</label> <input value={pokemonNameState} onInput={(event) => updatePokemonName(event)} />
         </div>
+        <div>
+          <label>Color:</label> <input value={pokemonColorState} onInput={(event) => updatePokemonColor(event)} />
+        </div>
+        <div>
+          <button onClick={() => onSubmit()}>Submit</button>
+          <button onClick={() => onCancel()}>Cancel</button>
+        </div>
+      </div>
     </div>
   )
 }

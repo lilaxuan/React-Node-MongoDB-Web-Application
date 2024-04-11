@@ -26,7 +26,7 @@ router.post('/', async function(req, res) {
 
     try {
         const response = await PokemonModel.insertPokemon(newPokemon);
-        res.cookie('pokemonOwner', 'yuchen');
+        res.cookie('pokemonOwner', 'jiaxuan'); // set up the request cookie owner; only can be updated when post api is called!!! just updating the server.js doesn;t work
         res.cookie('favoriteColor', 'yellow');
         return res.send(response);
     } catch (error) {
@@ -107,9 +107,32 @@ router.delete('/:pokemonId', async function(req, res) {
     // return res.send("Success :)");
 })
 
+// router.get('/', async function (req, res) {
+//     const name = req.query.name; // Access query parameter for filtering by name
+//     const owner = req.cookies.pokemonOwner; // Assuming you still want to use owner from cookies for some logic
+//     console.log('owner is: ', owner);
+//     try {
+//         if (name) {
+//             // Assuming you have a method in your PokemonModel to find a Pokemon by name
+//             // This is just a hypothetical method name; adjust according to your actual model
+//             const pokemonByName = await PokemonModel.findByName(name);
+//             return res.send(pokemonByName);
+//         } else {
+//             // If no name query is provided, retrieve all Pokemon
+//             // const allPokemon = await PokemonModel.getAllPokemon(); // Your existing method for fetching all Pokemon
+//             const allPokemon = await PokemonModel.getPokemonByOwner(owner);
+//             return res.send(allPokemon);
+//         }
+//     } catch (error) {
+//         res.status(400).send("Error retrieving Pokemon from the database.");
+//     }
+// });
+
+
 // localhost:8000/api/pokemon?name=pikachu
 router.get('/', async function(req, res) {
     const owner = req.cookies.pokemonOwner;
+    console.log('owner is: ', owner);
 
     // for(let i = 0; i < pokemonColors.length; i++) {
     //     const pokemonRow = pokemonColors[i];
