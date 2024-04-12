@@ -8,7 +8,8 @@ const users = [
 ]
 
 
-// localhost:8000/users/?startOfUsername=h
+// http://localhost:8000/api/users/?startOfUsername=h (request query param is not a must)
+// http://localhost:8001/api/users/?startOfUsername=h (request query param is not a must)
 router.get('/', function(request, response) {
     const startOfUsername = request.query.startOfUsername
 
@@ -28,8 +29,8 @@ router.get('/', function(request, response) {
     response.send(foundUsers)
 });
 
-// localhost:8000/users/123
-// localhost:8000/users/123/pokemon/pikachu1
+// localhost:8000/api/users/123
+// localhost:8000/api/users/123/pokemon/pikachu1
 router.get('/:userId', function(request, response) {
     // params = {
     //  userId: 123,
@@ -52,6 +53,8 @@ router.get('/:userId', function(request, response) {
 });
 
 
+// http://localhost:8000/api/users
+// request body json
 router.post('/', function(request, response) {
     const body = request.body;
 
